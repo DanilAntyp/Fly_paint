@@ -1,0 +1,19 @@
+{
+  "profile": "MacBook Pro M1, 32 GB unified RAM",
+  "device": "cpu",
+  "neurons": 512,
+  "benchmark_sizes": [512, 1024, 2048],
+  "dtype": "float32",
+  "seed": 42,
+  "leak": 0.3,
+  "recurrent_gain": 0.9,
+  "training_plan": {
+    "algorithm": "evolutionary_readout",
+    "train_recurrent_graph": false,
+    "parallel_environments": 1,
+    "episode_steps": 256,
+    "initial_population": 16,
+    "initial_generations": 10,
+    "note": "Starting settings, not measured training performance; trainer not implemented yet."
+  }
+}
