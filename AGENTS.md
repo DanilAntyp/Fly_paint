@@ -3,8 +3,10 @@
 ## Mission
 
 Build a playful local web app where a virtual fly holds a pen, moves over a
-canvas, and learns to draw circles, squares and spirals using a controller
-derived from real Drosophila connectivity. Working name: Fly Gogh.
+canvas, and attempts to redraw an image uploaded by the user using a controller
+derived from real Drosophila connectivity. Image copying is the primary MVP
+experience. Circles, squares and spirals are supporting training/debug presets.
+Working name: Fly Gogh.
 The humor: scientists mapped a fly nervous system and we sent it to art school.
 
 This document is project guidance, not an automatic task scheduler. The owner
@@ -43,16 +45,59 @@ Distinguish observed data, engineering assumptions and untested hypotheses.
 
 ## MVP experience
 
-The user chooses circle, square, spiral or free drawing, starts the experiment,
-and watches a fly draw with its movement. Display the target and actual ink,
-episode/generation, measured reward and best drawing. Provide pause/resume,
-reset with seed, speed control, PNG export and a short methodology panel.
-Add local silhouette upload and SVG/replay export after the core loop works.
+The user uploads a picture, previews the drawing target, starts the experiment,
+and watches a fly recreate it stroke by stroke through its movement. Show the
+original image, the simplified target and the live drawing with clear labels.
+Display episode/generation, measured reward and best drawing. Provide
+pause/resume, reset with seed, speed control, PNG export and a short methodology
+panel. Include image upload in the first working release; do not defer it.
+SVG/replay export and full-color painting can follow the working sketch mode.
 Neural stimulation/suppression is an experimental control, not a mood detector.
 Show actual controller activity if activity is displayed.
 
 No authentication, cloud accounts, social feed, billing or image-generation API
 is required. Do not fake learning with a pre-scripted improving animation.
+
+## Image-to-drawing requirements (MVP)
+
+- Accept local PNG, JPEG and WebP via file picker and drag-and-drop; keep images
+  local to the browser/local trainer. No external image service is needed.
+- Validate decoded format, file size (initial cap 10 MB), dimensions (initial
+  cap 16 megapixels) and corrupt/unsupported inputs. Enforce limits at the local
+  API too; do not rely on a filename extension. Provide understandable errors.
+- Apply image orientation, composite transparency onto the selected paper color
+  and fit with padding so aspect ratio is preserved. Never silently stretch.
+- Start with a black-ink sketch of arbitrary uploaded images: portraits, objects,
+  pets or simple artwork. Preprocess into a grayscale/contour target, with
+  adjustable detail/threshold and a preview. Explain that sketch mode simplifies
+  color and fine detail. Do not promise photorealistic reproduction.
+- Begin with a 128 x 128 reward target, configurable to 64 or 256. Display the
+  canvas at higher resolution from the same recorded strokes. This keeps M1
+  training costs bounded independently of original upload resolution.
+- Feed target and current canvas features into the controller, including a
+  coarse global target representation plus local patches/residual ink around
+  the pen. Merely adding an upload button to a target-blind controller is not
+  enough. Document these inputs as artificial sensory encoding.
+- Every visible ink mark must come from the agent's bounded movement and pen
+  actions. Preprocessing may derive a target but must not supply a finished
+  drawing, a hidden tracing path or direct next-action instructions.
+- Reward target coverage and image similarity alongside off-target/repeated-ink
+  penalties. Evaluate foreground precision/recall with explicit blank-target
+  handling; raw background-dominated pixel accuracy is not a useful score.
+- Blank/near-empty targets should show a useful message and skip training.
+  Replacing an image cancels the previous run, clears incompatible state and
+  rejects stale progress events. Show progress only for the active image/run.
+- Initial MVP may optimize a small readout for the current uploaded image.
+  Label this as per-image training and report adaptation separately from
+  zero-shot performance. Keep the connectome reservoir fixed. Later train over
+  diverse images if generalization is needed; do not retrain the whole brain.
+- Circles and spirals remain curriculum/debug fixtures. Include small generated
+  or appropriately licensed non-geometric image fixtures. Compare trained and
+  untrained attempts for at least one image and document actual results.
+- Test upload -> preview -> start -> progressive drawing -> pause/reset ->
+  export. Also check aspect ratio, orientation, transparency, bad/oversized
+  inputs, blank targets and replacing an image mid-run. Export the drawing
+  alone by default, without silently including the reference.
 
 ## Controller and environment
 
