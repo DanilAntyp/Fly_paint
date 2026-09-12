@@ -1,100 +1,124 @@
-# Fly_paint · Fly Gogh
+# Fly Gogh — Fly_paint
 
-**A fly goes to art school.** An experimental drawing agent built around a
-small network derived from real fruit-fly neural connectivity. Upload an image
-and watch the fly attempt to redraw it stroke by stroke on a canvas.
+**A tiny connectome-derived controller, one pen, and your picture.**
 
-Status: **Codex preparation kit**, not a finished app or trained model.
-Includes project instructions, official data manifest, download/schema tools,
-streaming subgraph extraction, a sparse controller primitive, CPU benchmark
-and tests. The next task implements image upload, drawing, training and the
-interface; image copying is now a first-release requirement.
+Upload a PNG, JPEG or WebP, preview its contours, and train a virtual fly to
+attempt a sketch through bounded movement. This is a runnable local research
+prototype with real readout learning. Drawings remain exploratory scribbles
+and partial contours; it does **not** yet reliably reproduce recognizable images.
 
-## Start locally (MacBook M1, 32 GB)
+![Fly Gogh local interface, real graph, one-generation smoke run](docs/images/desktop.png)
 
-Use a native ARM64 Python 3.11+ installation (3.12 recommended).
+## Start on MacBook M1 / 32 GB
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-python -m unittest discover -s tests -v
-python scripts/benchmark.py --nodes 512 --steps 2000
-```
-
-The benchmark's default graph is synthetic and measures reservoir operations
-only. It does not train a fly or predict total training time.
-
-## Get the real data
+Use native ARM64 Python **3.12**, Node **22 LTS** (22.12+), and npm. The locked
+binary packages were downloaded successfully for **macOS 14+ ARM64**. Actual
+execution and performance were tested on Linux x86_64, not on an M1 machine.
+Do not use a Rosetta/x86 Python for the native ARM64 setup.
 
 ```bash
-python scripts/download_data.py
-python scripts/inspect_data.py data/raw/*.feather
-python scripts/preprocess_connectome.py --nodes 512
-python scripts/benchmark.py --graph data/processed/m1-512/graph.npz
+git clone https://github.com/DanilAntyp/Fly_paint.git
+cd Fly_paint
+bash scripts/setup.sh
+bash scripts/run.sh
 ```
 
-The first download is roughly 1.1 GB; allow several GB of working space.
-See [official download page](https://male-cns.janelia.org/download/).
-No neuPrint account is needed for these public bulk files. If a schema differs,
-the extractor stops and shows available columns; supply its explicit column
-flags after inspection. It preserves real edges among selected annotated IDs.
-Its degree-based selection is a computational baseline, not a validated
-biological sensory-to-motor circuit.
+Open **http://127.0.0.1:8000**. This first command uses the explicitly labeled
+**Synthetic demo graph** (512 nodes). Upload your picture or try `cat`, choose
+a seed and generation budget, then select **Send to art school**. Pause stops
+both optimization and stroke replay; reset cancels the run and preserves the
+seed for the next start. Replay speed changes playback only. PNG exports the
+current drawing alone. The original, simplified target, best attempt, scores
+and held-out results are visible separately. `free` is untrained exploration.
 
-Data and model artifacts are ignored by Git. Re-download in each new execution
-environment or use an explicitly configured persistent local cache.
+## Use the real Male CNS data
 
-## Give this to Codex
-
-Choose this repository and start a task with:
-
-> Read AGENTS.md and docs/CODEX_START.md. Implement the image-copying MVP:
-> upload a picture, preview a simplified sketch target, and watch the fly draw
-> it through learned movement. Include this in the first working release.
-> Install dependencies, download and validate the necessary Male CNS data,
-> and start with the MacBook M1 / 32 GB profile. Follow docs/OPTIMIZATION.md
-> for a task-related subgraph and group-ablation experiments. Run meaningful
-> checks and report real results. Do not stop at a plan or claim synthetic
-> data is the biological connectome.
-
-The files do not automatically start a background coding task. In a restricted
-execution environment, allow the documented public data and package sources
-through that environment's supported network settings, or download locally.
-
-## Design and limits
-
-Warm paper, black ink, dark laboratory panels and an expressive fly with a pen.
-The main flow is **upload picture -> preview sketch target -> start the fly ->
-watch strokes -> export the drawing**. Begin with black-ink sketches and
-adjustable detail, including portraits or objects. Original image, simplified
-target and actual drawing remain visibly distinct. Circles and spirals are
-training/debug presets.
-
-The initial version can train its small readout for each uploaded image;
-instant copying of previously unseen images is a later generalization goal.
-Full-color painting can follow sketch mode. Nothing should paste the reference
-onto the canvas or animate a predetermined tracing path as if it were learned.
-There is no biological "drawing region" encoded in the dataset. This project
-adds artificial dynamics, observations, actions and learning. We will select
-candidate pathways and test group removal on held-out tasks before pruning.
-
-- [Project guidance](AGENTS.md)
-- [First coding task](docs/CODEX_START.md)
-- [Network selection and ablation](docs/OPTIMIZATION.md)
-- [MacBook resource notes](docs/HARDWARE.md)
-- [Dataset and attribution](docs/DATA.md)
-
-## Verification
+The raw download is about 1.07 GB; leave several GB of free disk space.
+Downloads and processed graphs stay outside Git. No login, token or payment is
+needed. Stop the running server with Ctrl+C before changing graph mode.
 
 ```bash
-python -m unittest discover -s tests -v
-python -m compileall -q src scripts tests
+.venv/bin/python scripts/download_data.py
+.venv/bin/python scripts/inspect_data.py data/raw/*.feather
+OPENBLAS_NUM_THREADS=1 .venv/bin/python scripts/extract_task_graph.py
+bash scripts/run.sh data/processed/task-512
 ```
 
-Real data download and preprocessing were blocked during preparation by a
-network restriction; do not treat this pipeline as validated on the full source
-tables yet. No training results or MacBook timings have been measured.
+This explicitly shows **Male CNS v1.0-derived subgraph**: 512 nodes and 22,235
+actual directed edges for the recorded release. Load errors remain errors;
+there is no silent synthetic fallback. Exact source URLs, hashes, observed
+schema and extraction counts are in [docs/DATA.md](docs/DATA.md) and
+[docs/EXTRACTION.json](docs/EXTRACTION.json).
 
-The underlying Male CNS dataset is CC BY; see the source page for attribution
-and terms. A code license has not yet been selected by the repository owner.
+## Train without the browser
+
+```bash
+bash scripts/train-m1.sh --graph data/processed/task-512 \
+  --image data/demo/cat.png --generations 10 --output runs/my-cat.npz
+```
+
+Omit `--graph` for the synthetic baseline. Use `--image /path/to/picture.png` for
+your own image; without it, `--preset cat` is the default. Available controls
+include `--size 64|128|256`, `--threshold`, `--seed`, `--steps` and
+`--population`. Defaults: one CPU worker, 512 neurons, 99 learned parameters,
+16 candidates, 10 generations and 256-step episodes. W is fixed. Checkpoints
+and metrics are saved to ignored `runs/`; they are not bundled pretrained models.
+
+## What was actually measured
+
+Both official data files were downloaded and validated. Three independent
+10-generation runs used the real task subgraph and three used a matched
+random graph. On the cat image, real-graph training seed 42 improved held-out
+score from **−8.40 to +4.72**, with **12.3% target coverage**. Seeds 43 and 44
+were weaker; seed 44 underperformed random actions. Across all three seeds,
+mean coverage was only **5.8%**. These are small experiments, not a claim of
+reliable image copying or biological superiority.
+
+The 512/1024/2048-node graphs ran at approximately 0.19/0.26/0.38 ms per complete
+CPU simulation step in this Linux environment. Individual inference processes
+peaked at 47–54 MiB; data extraction peaked around 1.4 GiB. These are **not M1
+benchmarks**. See [results and failure cases](docs/RESULTS.md),
+[hardware notes](docs/HARDWARE.md), and [methodology](docs/METHODOLOGY.md).
+
+Ablation tested four annotated groups and six pairs on frozen checkpoints and
+held-out starts/targets. No removal met the conservative 5% quality-loss rule
+across all cases. The application therefore retains the 512-node subgraph.
+Masking neurons is not presented as a memory optimization.
+
+## Verify / develop
+
+```bash
+OPENBLAS_NUM_THREADS=1 .venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python -m compileall -q src scripts services tests
+npm run build --prefix apps/web
+npx --prefix apps/web playwright install chromium
+npm test --prefix apps/web
+```
+
+The browser tests start the local API themselves. To exercise real mode:
+`FLYPAINT_GRAPH=data/processed/task-512 npm test --prefix apps/web`.
+For UI development, run the API plus `npm run dev --prefix apps/web` in a
+second terminal. The Vite proxy forwards `/api` and WebSockets locally.
+
+- `src/flypaint`: target processing, graph, reservoir, physics and learning.
+- `services/trainer`: local API, jobs, WebSockets and PNG export.
+- `apps/web`: React/TypeScript/Canvas UI; no external image services or fonts.
+- `scripts`: download, inspect, extract, train, measure and ablate.
+- `docs`: recorded provenance, evidence and optimization decisions.
+
+## Limits and attribution
+
+This is an artificial model, not the entire fly brain. Chosen sensory encoding,
+nonnegative normalized weights, dynamics and readout are engineering assumptions.
+Image copying is per-image adaptation; zero-shot copying, robust portrait
+reconstruction, full-color painting, SVG export, PPO and MPS are not implemented.
+No real M1 timing or biological fidelity is claimed.
+
+Male CNS v1.0 data: FlyEM at HHMI Janelia, University of Cambridge, MRC Laboratory
+of Molecular Biology and Google Research, under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+See the [official project and publication](https://www.janelia.org/project-team/flyem/male-cns-connectome)
+and [downloads](https://male-cns.janelia.org/download/).
+Modifications here: annotation filtering, directed-path selection, induced
+subgraph extraction and incoming-count normalization. Dataset licensing does
+not imply a license has been assigned to this repository's code.

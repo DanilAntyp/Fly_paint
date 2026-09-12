@@ -4,6 +4,9 @@ from scipy import sparse
 
 
 def build_matrix(node_ids, pre_ids, post_ids, weights):
+    node_ids = list(node_ids)
+    if any(value is None or not str(value).strip() for value in node_ids):
+        raise ValueError('Node IDs cannot be missing or empty')
     ids = [str(value) for value in node_ids]
     if not ids or len(set(ids)) != len(ids):
         raise ValueError('Node IDs must be nonempty and unique')

@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flypaint"
-version = "0.1.0"
-description = "Data preparation for a connectome-derived drawing agent"
+version = "0.2.0"
+description = "Local connectome-derived drawing agent and CPU readout training"
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26,<3", "scipy>=1.11,<2", "pyarrow>=15,<30"]
+dependencies = ["numpy>=1.26,<3", "scipy>=1.11,<2", "pyarrow>=15,<30", "Pillow>=12,<13", "fastapi>=0.141,<0.142", "uvicorn>=0.52,<0.53", "websockets>=16,<17"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
