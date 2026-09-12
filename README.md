@@ -1,12 +1,14 @@
 # Fly_paint · Fly Gogh
 
 **A fly goes to art school.** An experimental drawing agent built around a
-small network derived from real fruit-fly neural connectivity.
+small network derived from real fruit-fly neural connectivity. Upload an image
+and watch the fly attempt to redraw it stroke by stroke on a canvas.
 
 Status: **Codex preparation kit**, not a finished app or trained model.
 Includes project instructions, official data manifest, download/schema tools,
 streaming subgraph extraction, a sparse controller primitive, CPU benchmark
-and tests. The next task implements drawing, training and the interface.
+and tests. The next task implements image upload, drawing, training and the
+interface; image copying is now a first-release requirement.
 
 ## Start locally (MacBook M1, 32 GB)
 
@@ -47,7 +49,9 @@ environment or use an explicitly configured persistent local cache.
 
 Choose this repository and start a task with:
 
-> Read AGENTS.md and docs/CODEX_START.md. Implement the working drawing MVP.
+> Read AGENTS.md and docs/CODEX_START.md. Implement the image-copying MVP:
+> upload a picture, preview a simplified sketch target, and watch the fly draw
+> it through learned movement. Include this in the first working release.
 > Install dependencies, download and validate the necessary Male CNS data,
 > and start with the MacBook M1 / 32 GB profile. Follow docs/OPTIMIZATION.md
 > for a task-related subgraph and group-ablation experiments. Run meaningful
@@ -61,7 +65,16 @@ through that environment's supported network settings, or download locally.
 ## Design and limits
 
 Warm paper, black ink, dark laboratory panels and an expressive fly with a pen.
-Watch attempts, inspect measured progress, pause/reset, export the drawing.
+The main flow is **upload picture -> preview sketch target -> start the fly ->
+watch strokes -> export the drawing**. Begin with black-ink sketches and
+adjustable detail, including portraits or objects. Original image, simplified
+target and actual drawing remain visibly distinct. Circles and spirals are
+training/debug presets.
+
+The initial version can train its small readout for each uploaded image;
+instant copying of previously unseen images is a later generalization goal.
+Full-color painting can follow sketch mode. Nothing should paste the reference
+onto the canvas or animate a predetermined tracing path as if it were learned.
 There is no biological "drawing region" encoded in the dataset. This project
 adds artificial dynamics, observations, actions and learning. We will select
 candidate pathways and test group removal on held-out tasks before pruning.
