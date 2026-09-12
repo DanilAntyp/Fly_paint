@@ -1,7 +1,7 @@
 {
   "dataset": "male-cns:v1.0",
   "source": "https://male-cns.janelia.org/download/",
-  "license": "CC BY; follow source license link for exact terms",
+  "license": "CC BY 4.0 \u2014 https://creativecommons.org/licenses/by/4.0/",
   "files": {
     "annotations": {
       "filename": "body-annotations-male-cns-v1.0-minconf-0.5.feather",

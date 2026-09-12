@@ -9,7 +9,7 @@ class GraphTests(unittest.TestCase):
         np.testing.assert_allclose(matrix @ np.array([2, 0, 0]), [0, 1, 0])
 
     def test_invalid_inputs(self):
-        for args in [(['a', 'a'], [], [], []), (['a'], ['x'], ['a'], [1]),
+        for args in [([None], [], [], []), ([''], [], [], []), (['a', 'a'], [], [], []), (['a'], ['x'], ['a'], [1]),
                      (['a'], ['a'], ['a'], [-1]), (['a'], ['a'], ['a'], [float('nan')]),
                      (['a'], ['a'], [], [1])]:
             with self.assertRaises(ValueError):

@@ -17,3 +17,5 @@ runs/
 checkpoints/
 *.pt
 *.pth
+playwright-report/
+test-results/

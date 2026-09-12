@@ -1,0 +1,65 @@
+[
+  {
+    "label": "Male CNS v1.0-derived subgraph",
+    "nodes": 512,
+    "edges": 22235,
+    "episodes": 10,
+    "steps_per_episode": 256,
+    "steps_per_second": 5186.374463170973,
+    "step_ms": 0.19281291914055032,
+    "elapsed_seconds": 0.4936010729998088,
+    "peak_rss_mib": 46.97265625,
+    "sparse_array_bytes": 179932,
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "versions": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0",
+      "pyarrow": "25.0.1",
+      "pillow": "12.3.0"
+    },
+    "scope": "CPU inference with observation, physics and rasterization; no training or browser"
+  },
+  {
+    "label": "Male CNS v1.0-derived subgraph",
+    "nodes": 1024,
+    "edges": 87149,
+    "episodes": 10,
+    "steps_per_episode": 256,
+    "steps_per_second": 3774.4441369460174,
+    "step_ms": 0.2649396742189225,
+    "elapsed_seconds": 0.6782455660004416,
+    "peak_rss_mib": 48.81640625,
+    "sparse_array_bytes": 701292,
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "versions": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0",
+      "pyarrow": "25.0.1",
+      "pillow": "12.3.0"
+    },
+    "scope": "CPU inference with observation, physics and rasterization; no training or browser"
+  },
+  {
+    "label": "Male CNS v1.0-derived subgraph",
+    "nodes": 2048,
+    "edges": 234095,
+    "episodes": 10,
+    "steps_per_episode": 256,
+    "steps_per_second": 2618.574580562885,
+    "step_ms": 0.3818871562501158,
+    "elapsed_seconds": 0.9776311200002965,
+    "peak_rss_mib": 53.5,
+    "sparse_array_bytes": 1880956,
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "versions": {
+      "numpy": "2.3.5",
+      "scipy": "1.17.0",
+      "pyarrow": "25.0.1",
+      "pillow": "12.3.0"
+    },
+    "scope": "CPU inference with observation, physics and rasterization; no training or browser"
+  }
+]
