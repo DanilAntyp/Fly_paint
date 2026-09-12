@@ -17,14 +17,23 @@ the task environment. Follow environment network/access restrictions.
    The included degree-based extractor is only a smoke-test baseline. Implement
    task-related extraction using verified visual/navigation/descending/motor
    annotations before treating this as a sensorimotor experiment.
-5. Implement a deterministic drawing environment and meaningful reward. Test
-   stationary, repeated-ink, off-target and ideal-path behaviors.
+5. Implement local PNG/JPEG/WebP upload and sketch-target preprocessing first,
+   following AGENTS.md's image-to-drawing requirements. Include original/target
+   previews, aspect-ratio preservation, upload limits and detail controls.
+   Use a 128 x 128 target initially. Build a deterministic drawing environment
+   whose observations contain target and canvas features. Test stationary,
+   repeated-ink, off-target, ideal-path and blank-target behaviors.
 6. Implement bounded evolutionary optimization of a small readout on the fixed
    reservoir. Start with 16 candidates, 10 generations and 256-step episodes.
    Record untrained, trained and random-action scores on held-out seeds. These
-   budgets are initial trials; success is not guaranteed.
+   budgets are initial trials; success is not guaranteed. Support per-image
+   readout optimization for the uploaded target and label it honestly. Evaluate
+   adaptation on an uploaded non-geometric image; shapes alone do not satisfy
+   the MVP. Never substitute a computed tracing path for the agent's actions.
 7. Build the React/TypeScript canvas UI and a local Python API. Wire real
-   progress, pause/cancellation, reset, speed and PNG export. Add install/run
+   image picker/dropzone, target previews, live strokes, progress,
+   pause/cancellation, reset, speed and PNG export. Replacing the image must
+   cancel the old run and prevent stale events. Add install/run
    scripts and lockfiles based on versions actually used. Keep keys unnecessary.
 8. Follow docs/OPTIMIZATION.md for task-related subgraphs and ablation. Report
    actual quality/performance tradeoffs. Avoid full-network backpropagation.
@@ -36,6 +45,6 @@ If public downloads are blocked, keep a clearly marked synthetic mode working,
 record the precise blocker and commands needed in a permitted environment.
 Do not bypass access restrictions or claim the real dataset was used.
 
-Downloading is data acquisition, not training. The target shapes and simulator
+Downloading is data acquisition, not training. Uploaded target images and the simulator
 generate drawing experience; there is no pre-existing fly drawing skill in
 these tables. A separate pretrained checkpoint is not required to start.
